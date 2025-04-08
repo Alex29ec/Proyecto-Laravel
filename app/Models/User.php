@@ -20,11 +20,19 @@ class User extends Authenticatable implements MustVerifyEmail
 
      protected $fillable = [
         'name',
+        'username',
         'email',
         'password',
-        'numero',
+        'gender',
         'rol',
+        'birthdate',
+        'aceptterms',
+        'phone',
+        'email_verified_at',
+        'remember_token',
     ];
+    
+    
     public function telefonos()
 {
     return $this->hasMany(Telefono::class);

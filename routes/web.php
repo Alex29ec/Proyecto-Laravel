@@ -13,8 +13,7 @@
     use App\Models\Menu;
 
     Route::get('/', function () {
-        $menus = Menu::all(); 
-        return view('welcome', compact('menus'));
+        return view('welcome');
     })->name('welcome');
 
     Route::middleware([AdminMiddleware::class])->group(function () {
@@ -45,6 +44,7 @@
     Route::post('/mesas', [APIMesaController::class, 'store']); 
     Route::put('/mesas/{id}', [APIMesaController::class, 'update']);
     Route::delete('/mesas/{id}', [APIMesaController::class, 'destroy']);
+
 Route::fallback(function () {
     return view('errors.404');
 });
