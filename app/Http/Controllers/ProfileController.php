@@ -13,6 +13,7 @@ use App\Models\Telefono;
 
 class ProfileController extends Controller
 {
+    
     public $telefonos;
     public function edit($id = null)
     {

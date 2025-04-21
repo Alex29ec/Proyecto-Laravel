@@ -1,6 +1,6 @@
 <div class="container mt-4">
     <h2>Mi Perfil</h2>
-    
+
     <div class="card p-3 mb-4">
         <h4>{{ auth()->user()->name }}</h4>
         <p><strong>Email:</strong> {{ auth()->user()->email }}</p>
@@ -31,7 +31,7 @@
                 <div class="col-md-4">
                     <div class="card mb-3">
                         @if($reserva->mesa)
-                            <img src="{{ asset('storage/imagenes/mesas/' . $reserva->mesa->imagen) }}" class="card-img-top" alt="Mesa {{ $reserva->mesa->nombre }}">
+                            <img src="{{ asset('storage/imagen/'.Auth()->user()->id.'/fotos' . $reserva->imagen) }}" class="card-img-top" alt="Reserva">
                         @endif
                         <div class="card-body">
                             <h5 class="card-title">Mesa: {{ $reserva->mesa->nombre ?? 'Sin asignar' }}</h5>

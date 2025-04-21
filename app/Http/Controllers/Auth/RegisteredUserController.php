@@ -15,9 +15,9 @@ use Illuminate\Support\Str;
 
 class RegisteredUserController extends Controller
 {
-    /**
+ /**
      * Display the registration view.
-     */
+     */   
     public function create(): View
     {
         return view('auth.register');
@@ -56,10 +56,6 @@ class RegisteredUserController extends Controller
             'email_verified_at' => now(),
             'remember_token' => Str::random(10),
         ]);
-    
-
-    
-
         event(new Registered($user));
 
         Auth::login($user);

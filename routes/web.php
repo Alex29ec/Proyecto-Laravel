@@ -4,13 +4,8 @@
     use Illuminate\Support\Facades\Route;
     use App\Http\Controllers\ReservaController;
     use App\Http\Controllers\AdminController;
-    use App\Http\Controllers\EditarController;
     use App\Http\Middleware\AdminMiddleware;
     use App\Http\Controllers\APIMesaController;
-    use App\Livewire\PerfilUsuario;
-    use App\Livewire\Admin\EditarMenu;
-    use App\Livewire\Admin\EditarUsuario;
-    use App\Models\Menu;
 
     Route::get('/', function () {
         return view('welcome');
