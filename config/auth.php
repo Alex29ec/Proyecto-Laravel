@@ -40,6 +40,11 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        'tatuador' => [
+            'driver' => 'session',
+            'provider' => 'tatuadors',
+        ],
     ],
 
     /*
@@ -64,11 +69,11 @@ return [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', App\Models\User::class),
         ],
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        
+        'tatuadors' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Tatuador::class,
+        ],
     ],
 
     /*

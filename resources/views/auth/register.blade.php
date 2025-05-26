@@ -78,7 +78,7 @@
         </div>
 
         <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900" href="{{ route('login') }}">
+            <a class="underline text-sm text-gray-600 hover:text-gray-900" href="{{ route('loginunificado') }}">
                 {{ __('¿Ya tienes una cuenta?') }}
             </a>
             <x-primary-button class="ms-4">{{ __('Registrarse') }}</x-primary-button>

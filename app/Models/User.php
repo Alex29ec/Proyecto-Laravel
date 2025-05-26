@@ -2,11 +2,10 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -18,7 +17,7 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var list<string>
      */
 
-     protected $fillable = [
+    protected $fillable = [
         'name',
         'username',
         'email',
@@ -28,16 +27,10 @@ class User extends Authenticatable implements MustVerifyEmail
         'birthdate',
         'aceptterms',
         'phone',
+        'google_id',
         'email_verified_at',
         'remember_token',
     ];
-    
-    
-    public function telefonos()
-{
-    return $this->hasMany(Telefono::class);
-}
-
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -60,4 +53,5 @@ class User extends Authenticatable implements MustVerifyEmail
             'password' => 'hashed',
         ];
     }
+    
 }

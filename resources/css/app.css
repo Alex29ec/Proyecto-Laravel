@@ -1,3 +1,11 @@
+@font-face {
+    font-family: 'TattooShop';
+    src: url('../fonts/TattooShop.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

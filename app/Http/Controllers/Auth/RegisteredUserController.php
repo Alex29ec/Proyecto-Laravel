@@ -40,7 +40,7 @@ class RegisteredUserController extends Controller
             'gender'=> ['required', 'in:male,female,other'],
             'aceptterms'=> ['accepted'],
             'email_verified_at' => now(),
-            'remember_token' => Str::random(10),
+            
         ]);
     
         $user = User::create([
@@ -54,7 +54,7 @@ class RegisteredUserController extends Controller
             'phone' => $request->phone,
             'password' => Hash::make($request->password),
             'email_verified_at' => now(),
-            'remember_token' => Str::random(10),
+            
         ]);
         event(new Registered($user));
 

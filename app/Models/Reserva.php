@@ -9,18 +9,25 @@ class Reserva extends Model
 {
     use HasFactory;
 
-    protected $table = 'reservas';
-
+    protected $table = 'reservations';
     protected $fillable = [
-        'nombre_cliente',
-        'nombre_tatuador',
-        'imagen',
-        'fecha',
-        'hora',
+        'id_cliente',
+        'id_tatuador',
+        'image',
+        'date',
+        'hour',
     ];
-
+    public function tatuador()
+    {
+        return $this->belongsTo(Tatuador::class, 'id_tatuador');
+    }
+    
     protected $casts = [
         'fecha' => 'date',
         'hora' => 'string',
     ];
+    public function cliente()
+    {
+        return $this->belongsTo(User::class, 'id_cliente');
+    }
 }
