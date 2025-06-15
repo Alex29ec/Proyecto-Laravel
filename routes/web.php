@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\AdminMiddleware;
 use App\Livewire\AdminPanel;
 use App\Livewire\PerfilUsuario;
 use Illuminate\Support\Facades\Route;
@@ -10,6 +11,8 @@ use App\Http\Controllers\TatuadorController;
 use App\Http\Controllers\Auth\LoginUnificadoController;
 use App\Livewire\CrearReserva;
 use App\Http\Controllers\HomeController;
+use App\Models\Tatuador;
+use Illuminate\Support\Facades\Hash;
 
 // Welcome
 Route::get('/', [HomeController::class, 'index'])->name('welcome');
@@ -25,8 +28,8 @@ Route::post('/login', [LoginUnificadoController::class, 'login'])->name('login')
 
 // Rutas públicas
 Route::get('/galeria', [GaleriaController::class, 'index'])->name('galeria');
-Route::get('/contacto', fn () => view('contacto.index'))->name('contacto');
-Route::get('/terminos', fn () => view('terminos.index'))->name('terminos');
+Route::get('/contacto', fn() => view('contacto.index'))->name('contacto');
+Route::get('/terminos', fn() => view('terminos.index'))->name('terminos');
 Route::get('/artistas', [TatuadorController::class, 'index']);
 Route::get('/artistas/{id}', [TatuadorController::class, 'show'])->name('artistas.show');
 Route::get('/perfiltatuador', [TatuadorController::class, 'index'])->name('perfiltatuador');
@@ -37,9 +40,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::get('/profile/edit/{usuarioId}', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile/{usuarioId}', [ProfileController::class, 'update'])->name('profile.update');
-       Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
+    Route::get('/reservacreada')->name('reservacreada');
     Route::get('/admin/editar-usuario/{usuarioId}', [ProfileController::class, 'edit'])->where('usuarioId', '[0-9]+')->name('admin.editar.usuario');
     Route::post('/admin/editar-usuario/{usuarioId}', [ProfileController::class, 'update'])->where('usuarioId', '[0-9]+')->name('admin.actualizar.usuario');
 });
@@ -49,9 +52,6 @@ Route::middleware(['auth:web,tatuador'])->group(function () {
     Route::get('/reservas/create', [CrearReserva::class, 'create'])->name('reservas.create');
     Route::post('/reservas', [CrearReserva::class, ''])->name('reservas.store');
 });
-
-// Rutas protegidas para ADMINISTRADORES
-Route::get('/admin', AdminPanel::class)-> name('admin');
 
 // Rutas protegidas para TATUADORES
 Route::middleware(['auth:tatuador'])->group(function () {
@@ -63,6 +63,35 @@ Route::middleware(['auth:tatuador'])->group(function () {
     Route::delete('/galeria/{id}', [TatuadorController::class, 'eliminarFoto'])->name('tatuador.foto.eliminar');
 });
 
+// Rutas protegidas para ADMINISTRADORES
+Route::middleware([AdminMiddleware::class])->group(function () {
+
+    Route::get('/admin', AdminPanel::class)->name('admin');
+    Route::get('/admin/tatuador/crear', function () {
+        return view('admin.crear-tatuador');
+    })->name('tatuador.create');
+
+
+    Route::post('/admin/tatuador/guardar', function (\Illuminate\Http\Request $request) {
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email|unique:tatuadors,email',
+            'specialties' => 'nullable|string',
+            'photo' => 'nullable|string',
+            'password' => 'required|string|min:6',
+        ]);
+
+        Tatuador::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'specialties' => $request->specialties,
+            'photo' => $request->photo,
+            'password' => Hash::make($request->password),
+        ]);
+
+        return redirect()->route('/admin');
+    })->name('tatuador.store');
+});
 // Página de error 404 si no encuentra ruta
 Route::fallback(function () {
     return view('errors.404');

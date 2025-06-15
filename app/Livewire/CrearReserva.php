@@ -8,6 +8,10 @@ use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Reserva;
 use App\Services\GoogleCalendarService;
+use Illuminate\Support\Facades\Mail;
+use App\Services\ReservaCreadaMail;
+
+use phpDocumentor\Reflection\Location;
 use Request;
 
 class CrearReserva extends Component
@@ -81,54 +85,47 @@ class CrearReserva extends Component
         }
 
         $this->horasDisponibles = $todasLasHoras;
-        
+
     }
 
     public function reservar()
-    {
-        $this->validate([
-            'date' => 'required|date|after_or_equal:today',
-            'hour' => 'required',
-            'image' => 'required|image|max:2048',
-        ]);
+{
+    $this->validate([
+        'date' => 'required|date|after_or_equal:today',
+        'hour' => 'required',
+        'image' => 'required|image|max:2048',
+    ]);
 
-        if (Auth::guard('tatuador')->check()) {
-            $this->validate(['id_cliente' => 'required|exists:users,id']);
-            $id_tatuador = Auth::guard('tatuador')->id();
-            $id_cliente = $this->id_cliente;
-        } else {
-            $this->validate(['id_tatuador' => 'required|exists:tatuadors,id']);
-            $id_cliente = Auth::id();
-            $id_tatuador = $this->id_tatuador;
-        }
-
-        // Guardar imagen
-        $path = $this->image->store('public/fotos-reservas');
-        $rutaFinal = str_replace('public/', 'storage/', $path);
-
-        // Crear la reserva
-        $reserva = Reserva::create([
-            'id_cliente' => $id_cliente,
-            'id_tatuador' => $id_tatuador,
-            'date' => $this->date,
-            'hour' => $this->hour,
-            'image' => $rutaFinal,
-        ]);
-
-        // Google Calendar integration
-        $cliente = User::find($id_cliente);
-        if ($cliente && $cliente->google_token) {
-            $calendarService = new GoogleCalendarService();
-            $calendarService->crearEvento($cliente, $reserva);
-        }
-        // Verificar si ya hay una reserva existente para el mismo tatuador, fecha y hora
-        $reservaExistente = Reserva::where('id_tatuador', $id_tatuador)
-            ->where('date', $this->date)
-            ->where('hour', $this->hour)
-            ->exists();
-        session()->flash('success', '¡Reserva realizada con éxito!');
-        $this->reset();
+    if (Auth::guard('tatuador')->check()) {
+        $this->validate(['id_cliente' => 'required|exists:users,id']);
+        $id_tatuador = Auth::guard('tatuador')->id();
+        $id_cliente = $this->id_cliente;
+    } else {
+        $this->validate(['id_tatuador' => 'required|exists:tatuadors,id']);
+        $id_cliente = Auth::id();
+        $id_tatuador = $this->id_tatuador;
     }
+
+    // Guardar imagen
+    $path = $this->image->store('public/fotos-reservas');
+    $rutaFinal = str_replace('public/', 'storage/', $path);
+
+    // Crear la reserva
+    Reserva::create([
+        'id_cliente' => $id_cliente,
+        'id_tatuador' => $id_tatuador,
+        'date' => $this->date,
+        'hour' => $this->hour,
+        'image' => $rutaFinal,
+    ]);
+
+    // Limpiar campos después de crear la reserva (opcional)
+    $this->reset(['id_cliente', 'id_tatuador', 'date', 'hour', 'image']);
+
+    // Mostrar mensaje de éxito
+    session()->flash('success', '¡Reserva creada con éxito!');
+}
+
 
     public function render()
     {

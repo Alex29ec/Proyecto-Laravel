@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -23,7 +24,6 @@ class GoogleController extends Controller
             ->with(['access_type' => 'offline', 'prompt' => 'consent'])
             ->redirect();
     }
-    
 
     public function handleGoogleCallback()
     {
@@ -32,26 +32,38 @@ class GoogleController extends Controller
         try {
             $googleUser = Socialite::driver('google')->stateless()->user();
 
-            // Guardamos o actualizamos el usuario
-            $user = User::updateOrCreate(
-                ['google_id' => $googleUser->getId()],
-                [
+            // Buscamos por email
+            $user = User::where('email', $googleUser->getEmail())->first();
+
+            if (!$user) {
+                // Si no existe, lo creamos con rol adecuado
+                $user = User::create([
                     'name' => $googleUser->getName(),
                     'email' => $googleUser->getEmail(),
                     'google_id' => $googleUser->getId(),
                     'username' => explode('@', $googleUser->getEmail())[0],
-                    'rol' => 'user',
+                    'rol' => $googleUser->getEmail() === 'aestcan29@iesmarquesdecomares.org' ? 'admin' : 'user',
                     'phone' => '000000000',
                     'gender' => 'otro',
                     'birthdate' => now(),
                     'aceptterms' => '1',
                     'password' => Hash::make(Str::random(16)),
-                ]
-            );
-            // Guardar los tokens de Google en el usuario
-            $user->google_token = $googleUser->token; // Token de acceso
-            $user->google_refresh_token = $googleUser->refreshToken; // Refresh token
+                ]);
+            } else {
+                // Si ya existe, solo actualizamos algunos datos
+                $user->update([
+                    'name' => $googleUser->getName(),
+                    'google_id' => $googleUser->getId(),
+                    'username' => $user->username ?? explode('@', $googleUser->getEmail())[0],
+                    'email_verified_at' => now(),
+                ]);
+            }
+
+            // Guardar tokens
+            $user->google_token = $googleUser->token;
+            $user->google_refresh_token = $googleUser->refreshToken;
             $user->save();
+
             Auth::login($user);
             return redirect()->route('welcome')->with('success', '¡Inicio de sesión con Google exitoso!');
         } catch (\Exception $e) {

@@ -8,7 +8,7 @@ class Tatuador extends Authenticatable implements MustVerifyEmail
 {
     use HasFactory;
 
-    protected $fillable = ['nombre', 'email', 'specialties', 'password', 'remember_token'];
+    protected $fillable = ['name', 'email', 'specialties', 'password','photo','remember_token'];
     protected $table = 'tatuadors';
     public function reservas()
     {

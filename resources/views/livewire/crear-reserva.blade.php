@@ -45,9 +45,6 @@
             @enderror
         </div>
 
-
-
-
         <div class="mb-3">
             <label class="form-label text-white">Foto de referencia:</label>
             <input type="file" wire:model="image" class="form-control required">
@@ -60,7 +57,7 @@
             <button type="submit" class="btn btn-light">Reservar</button>
         </div>
 
-        @if (session()->has('success'))
+        @if (!isset($desdeCorreo) && session()->has('success'))
             <div class="alert alert-success mt-3">
                 {{ session('success') }}
             </div>

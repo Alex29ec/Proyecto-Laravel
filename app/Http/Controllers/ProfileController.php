@@ -20,23 +20,34 @@ class ProfileController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
+            'phone' => 'nullable|string|max:15',
+            'gender' => 'nullable|string|max:255',
+            'username' => 'nullable|string|max:255|unique:users,username,' . $user->id,
         ]);
     
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
+            'phone' => $request->phone,
+            'gender' => $request->gender,
+            'username' => $request->username,
         ]);
-    
-        return redirect()->route('admin.index')->with('status', 'Perfil actualizado correctamente.');
+
+        return redirect()->route('perfil')->with('status', 'Perfil actualizado correctamente.');
     }
-    
 
-
-  
- 
      public function index()
     {
-        return view('admin.perfil')->with('telefonos', Auth::user()->telefonos);
+        return view('admin.perfil');
+    }
+    /**
+     * Show the form for editing the user's profile.
+     */
+    public function edit(Request $request)
+    {
+        $user = $request->user();
+
+        return view('profile.edit', compact('user'));
     }
 
     public function destroy(Request $request): RedirectResponse

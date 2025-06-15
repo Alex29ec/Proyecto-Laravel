@@ -13,6 +13,9 @@
                     <h1>Editar Usuario</h1>
                     <p>Nombre: {{ $user->name ?? 'No encontrado' }}</p>
                     <p>Email: {{ $user->email ?? 'No encontrado' }}</p>
+                    <p>Username: {{ $user->username ?? 'No encontrado' }}</p>
+                    <p>Telefono: {{ $user->phone ?? 'No encontrado' }}</p>
+                    <p>Genero: {{ $user->gender ?? 'No encontrado' }}</p>
                     
                     
                     @include('profile.partials.update-profile-information-form')
